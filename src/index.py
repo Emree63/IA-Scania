@@ -80,7 +80,7 @@ def displayHisto():
 #displayHisto()
 
 
-def knn_classification(train_df, test_df, feature1, feature2, k=10):
+def knn_classification(train_df, test_df, feature1, feature2, k=5):
     X_train = train_df[[feature1, feature2]]
     y_train = train_df["class"]
 
@@ -92,11 +92,29 @@ def knn_classification(train_df, test_df, feature1, feature2, k=10):
 
     y_pred = knn_model.predict(X_test)
 
-    print(y_pred)
-
     accuracy = accuracy_score(y_test, y_pred)
     confusion_mat = confusion_matrix(y_test, y_pred)
     classification_rep = classification_report(y_test, y_pred)
+
+    return accuracy, confusion_mat, classification_rep
+
+def find_best_k(train_df, test_df, feature1, feature2, start_k=1, end_k=10):
+    best_k = -1
+    best_accuracy = 0
+
+    for k in range(start_k, end_k + 1):
+        accuracy, _, _ = knn_classification(train_df, test_df, feature1, feature2, k)
+
+        print(f"Accuracy for k={k}: {accuracy}")
+
+        if accuracy > best_accuracy:
+            best_accuracy = accuracy
+            best_k = k
+
+    print(f"\nBest k: {best_k} with average accuracy: {best_accuracy}")
+
+def display_knn_results(train_df, test_df, feature1, feature2, k=5):
+    accuracy, confusion_mat, classification_rep = knn_classification(train_df, test_df, feature1, feature2, k)
 
     print(f"Accuracy: {accuracy}")
     print("\nConfusion Matrix:")
@@ -104,9 +122,22 @@ def knn_classification(train_df, test_df, feature1, feature2, k=10):
     print("\nClassification Report:")
     print(classification_rep)
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=confusion_mat, display_labels=['neg', 'pos'])
-    disp.plot(cmap='coolwarm', values_format='d')
+    # Create a figure with two subplots
+    fig, axs = plt.subplots(1, 2, figsize=(12, 5))
+
+    disp = ConfusionMatrixDisplay(confusion_matrix=confusion_mat, display_labels=['No failure', 'Failure'])
+    disp.plot(cmap='winter', values_format='d', ax=axs[0])
+    axs[0].set_title('Confusion Matrix')
+
+    # Normalized
+    normalized_confusion_mat = confusion_mat / confusion_mat.sum(axis=1)[:, np.newaxis]
+    disp_normalized = ConfusionMatrixDisplay(confusion_matrix=normalized_confusion_mat, display_labels=['No failure', 'Failure'])
+    disp_normalized.plot(cmap='summer', values_format='.4f', ax=axs[1])
+    axs[1].set_title('Normalized Confusion Matrix')
+
+    plt.tight_layout()
     plt.show()
 
 
-knn_classification(train, test, "ac_000", "bb_000")
+#display_knn_results(train, test, "ac_000", "cq_000")
+find_best_k(train, test, "ac_000", "cq_000")
