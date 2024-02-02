@@ -6,6 +6,10 @@ import matplotlib.patches as mpatches
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
 
 from constants import *
 
@@ -24,7 +28,7 @@ def displayInfo():
     print("Info :", test.info())
 
 
-def pre_processing(df,value_for_na = -1):
+def pre_processing(df,value_for_na = 0):
     df["class"] = df["class"].map({"neg":0,"pos":1})
     df = df.replace("na",value_for_na)
     for col in df.columns:
@@ -71,3 +75,38 @@ def displayHisto():
 
     plt.tight_layout()
     plt.show()
+
+#displayInfo()
+#displayHisto()
+
+
+def knn_classification(train_df, test_df, feature1, feature2, k=10):
+    X_train = train_df[[feature1, feature2]]
+    y_train = train_df["class"]
+
+    X_test = test_df[[feature1, feature2]]
+    y_test = test_df["class"]
+
+    knn_model = KNeighborsClassifier(n_neighbors=k)
+    knn_model.fit(X_train, y_train)
+
+    y_pred = knn_model.predict(X_test)
+
+    print(y_pred)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    confusion_mat = confusion_matrix(y_test, y_pred)
+    classification_rep = classification_report(y_test, y_pred)
+
+    print(f"Accuracy: {accuracy}")
+    print("\nConfusion Matrix:")
+    print(confusion_mat)
+    print("\nClassification Report:")
+    print(classification_rep)
+
+    disp = ConfusionMatrixDisplay(confusion_matrix=confusion_mat, display_labels=['neg', 'pos'])
+    disp.plot(cmap='coolwarm', values_format='d')
+    plt.show()
+
+
+knn_classification(train, test, "ac_000", "bb_000")
