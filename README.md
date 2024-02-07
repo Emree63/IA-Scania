@@ -1,7 +1,7 @@
 # Modelisation
 
 ---
-[Presentation](#presentation) | [Répartion](#gitlab-distribution)
+[Presentation](#presentation) | [Distribution](#gitlab-distribution)
 
 ---
 
