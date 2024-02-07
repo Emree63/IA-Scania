@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.decomposition import PCA
 
 from constants import *
 
@@ -94,7 +95,6 @@ def knn_classification(train_df, test_df, feature1, feature2, k=5):
 
     accuracy = accuracy_score(y_test, y_pred)
     confusion_mat = confusion_matrix(y_test, y_pred)
-    classification_rep = classification_report(y_test, y_pred)
 
     return accuracy, confusion_mat, classification_rep
 
@@ -119,8 +119,6 @@ def display_knn_results(train_df, test_df, feature1, feature2, k=5):
     print(f"Accuracy: {accuracy}")
     print("\nConfusion Matrix:")
     print(confusion_mat)
-    print("\nClassification Report:")
-    print(classification_rep)
 
     # Create a figure with two subplots
     fig, axs = plt.subplots(1, 2, figsize=(12, 5))
@@ -138,6 +136,33 @@ def display_knn_results(train_df, test_df, feature1, feature2, k=5):
     plt.tight_layout()
     plt.show()
 
-
 display_knn_results(train, test, "ac_000", "cq_000")
 find_best_k(train, test, "ac_000", "cq_000")
+
+# x1 = ["ab_000", "bb_000", "bv_000", "bu_000"]
+# y1 = ["dq_000", "cq_000", "cc_000"]
+
+x1 = ["ab_000"]
+y1 = ["dq_000", "bv_000", "cq_000"]
+
+pca = PCA(n_components=0.95)
+
+def df_pca(df):
+	X_pca = pca.fit_transform(df[x1]).flatten()
+	Y_pca = pca.fit_transform(df[y1]).flatten()
+	return pd.DataFrame({'class': df["class"], 'X': X_pca, 'Y': Y_pca})
+
+
+def plot_scatter(df):
+	neg = df[df["class"] == 0]
+	pos = df[df["class"] == 1]
+	plt.scatter(pos["X"], pos["Y"], color = "r")
+	plt.scatter(neg["X"], neg["Y"], color = "b")
+	plt.show()
+
+
+
+train_pca, test_pca = df_pca(train), df_pca(test)
+
+plot_scatter(train_pca)
+# knn_classification(train_pca, test_pca, "X", "Y")
