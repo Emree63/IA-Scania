@@ -1,16 +1,5 @@
-from collections import Counter
-import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
-from matplotlib.ticker import PercentFormatter, FuncFormatter
-import matplotlib.patches as mpatches
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.decomposition import PCA
+
 from func import *
 from constants import *
 
@@ -32,15 +21,16 @@ pos_means = pos_data.drop(columns=["class", "origin"]).mean()
 
 pca = PCA(n_components=0.95)
 
-#train_pca, test_pca = df_pca(train), df_pca(test)
+train_pca, test_pca = df_pca(train, pca), df_pca(test, pca)
 
 def menu():
     print("1. Display Histogramme")
-    print("2. Display Infos")
-    print("3. Display KNN results")
-    print("4. Find best K value")
-    print("5. Perform PCA and plot scatter")
-    print("6. Perform PCA and KNN classification")
+    print("2. Display Correlation")
+    print("3. Display Infos")
+    print("4. Display KNN results")
+    print("5. Find best K value")
+    print("6. Perform PCA and plot scatter")
+    print("7. Perform PCA and KNN classification")
     print("9. Exit")
 
     choice = input("Enter your choice: ")
@@ -48,22 +38,26 @@ def menu():
     return int(choice)
 
 def execute_function(choice, train, test, x_feature, y_feature):
-    if choice == 1:
-        displayHisto(neg_means, pos_means)
-    elif choice == 2:
-        print("Train :")
-        displayInfo(train)
-        print("Test :")
-        displayInfo(test)
-    elif choice == 3:
-        display_knn_results(train, test, x_feature, y_feature)
-    elif choice == 4:
-        find_best_k(train, test, x_feature, y_feature)
-    #elif choice == 5:
-        #plot_scatter(train_pca)
-    #elif choice == 6:
-        #knn_classification(train_pca, test_pca, x_feature, y_feature)
-        #find_best_k(train_pca, test_pca, x_feature, y_feature)
+	if choice == 1:
+		displayHisto(neg_means, pos_means)
+	elif choice == 2:
+		displayCorr(train)
+	elif choice == 3:
+		print("Train :")
+		displayInfo(train)
+		print("Test :")
+		displayInfo(test)
+	elif choice == 4:
+		k = input("N: ")
+		display_knn_results(train_pca, test_pca, "X", "Y", int(k))
+	elif choice == 5:
+		find_best_k(train_pca, test_pca, "X", "Y")
+	elif choice == 6:
+		plot_scatter(train_pca)
+	elif choice == 7:
+		k = input("N: ")
+		knn_classification(train_pca, test_pca, x_feature, y_feature, int(k))
+		find_best_k(train_pca, test_pca, x_feature, y_feature)
 
 choice = menu()
 
@@ -74,9 +68,6 @@ while choice != 9:
 
 # x1 = ["ab_000", "bb_000", "bv_000", "bu_000"]
 # y1 = ["dq_000", "cq_000", "cc_000"]
-
-x1 = ["ab_000"]
-y1 = ["dq_000", "bv_000", "cq_000"]
 
 #plot_scatter(train_pca)
 #knn_classification(train_pca, test_pca, "X", "Y")

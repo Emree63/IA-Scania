@@ -13,11 +13,18 @@ from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.decomposition import PCA
 from constants import *
 
+x1 = ["aa_000", "bt_000", "bv_000"]
+y1 = ["ci_000", "db_000", "ca_000", "cd_000"]
+
 def displayInfo(train):
     print("Header :", train.head(5))
     print("Shape :", train.shape)
     print("Describe :", train.describe())
     print("Info :", train.info())
+
+def displayCorr(train):
+    correlations = train.corr()["class"].sort_values(ascending=False)
+    print(correlations.to_string())
 
 def pre_processing(df,value_for_na = 0):
     df["class"] = df["class"].map({"neg":0,"pos":1})
@@ -72,7 +79,7 @@ def knn_classification(train_df, test_df, feature1, feature2, k=5):
 
     return accuracy, confusion_mat
 
-def find_best_k(train_df, test_df, feature1, feature2, start_k=1, end_k=10):
+def find_best_k(train_df, test_df, feature1, feature2, start_k=1, end_k=20):
     best_k = -1
     best_accuracy = 0
 
@@ -110,7 +117,7 @@ def display_knn_results(train_df, test_df, feature1, feature2, k=2):
     plt.tight_layout()
     plt.show()
 
-def df_pca(df):
+def df_pca(df, pca):
 	X_pca = pca.fit_transform(df[x1]).flatten()
 	Y_pca = pca.fit_transform(df[y1]).flatten()
 	return pd.DataFrame({'class': df["class"], 'X': X_pca, 'Y': Y_pca})
