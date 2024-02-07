@@ -77,7 +77,7 @@ def displayHisto():
     plt.show()
 
 #displayInfo()
-#displayHisto()
+displayHisto()
 
 
 def knn_classification(train_df, test_df, feature1, feature2, k=5):
@@ -139,5 +139,5 @@ def display_knn_results(train_df, test_df, feature1, feature2, k=5):
     plt.show()
 
 
-#display_knn_results(train, test, "ac_000", "cq_000")
+display_knn_results(train, test, "ac_000", "cq_000")
 find_best_k(train, test, "ac_000", "cq_000")
