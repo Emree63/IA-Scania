@@ -1,28 +1,19 @@
-from collections import Counter
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
-from matplotlib.ticker import PercentFormatter, FuncFormatter
-import matplotlib.patches as mpatches
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.metrics import ConfusionMatrixDisplay
-from sklearn.decomposition import PCA
-from constants import *
+from sklearn.model_selection import GridSearchCV
 
-x1 = ["aa_000", "bt_000", "bv_000"]
-y1 = ["ci_000", "db_000", "ca_000", "cd_000"]
 
-def displayInfo(train):
+def display_info(train):
     print("Header :", train.head(5))
     print("Shape :", train.shape)
     print("Describe :", train.describe())
     print("Info :", train.info())
 
-def displayCorr(train):
+def display_corr(train):
     correlations = train.corr()["class"].sort_values(ascending=False)
     print(correlations.to_string())
 
@@ -34,7 +25,7 @@ def pre_processing(df,value_for_na = 0):
             df[col] = pd.to_numeric(df[col])
     return df
 
-def displayHisto(neg_means, pos_means):
+def display_hist(neg_means, pos_means):
 
     print("Moyennes pour la classe 'neg':")
     print(neg_means)
@@ -61,42 +52,7 @@ def displayHisto(neg_means, pos_means):
     plt.tight_layout()
     plt.show()
 
-
-def knn_classification(train_df, test_df, feature1, feature2, k=5):
-    X_train = train_df[[feature1, feature2]]
-    y_train = train_df["class"]
-
-    X_test = test_df[[feature1, feature2]]
-    y_test = test_df["class"]
-
-    knn_model = KNeighborsClassifier(n_neighbors=k)
-    knn_model.fit(X_train, y_train)
-
-    y_pred = knn_model.predict(X_test)
-
-    accuracy = accuracy_score(y_test, y_pred)
-    confusion_mat = confusion_matrix(y_test, y_pred)
-
-    return accuracy, confusion_mat
-
-def find_best_k(train_df, test_df, feature1, feature2, start_k=1, end_k=20):
-    best_k = -1
-    best_accuracy = 0
-
-    for k in range(start_k, end_k + 1):
-        accuracy, _ = knn_classification(train_df, test_df, feature1, feature2, k)
-
-        print(f"Accuracy for k={k}: {accuracy}")
-
-        if accuracy > best_accuracy:
-            best_accuracy = accuracy
-            best_k = k
-
-    print(f"\nBest k: {best_k} with average accuracy: {best_accuracy}")
-
-def display_knn_results(train_df, test_df, feature1, feature2, k=2):
-    accuracy, confusion_mat = knn_classification(train_df, test_df, feature1, feature2, k)
-
+def display_random_forest_results(accuracy, confusion_mat):
     print(f"Accuracy: {accuracy}")
     print("\nConfusion Matrix:")
     print(confusion_mat)
@@ -117,16 +73,78 @@ def display_knn_results(train_df, test_df, feature1, feature2, k=2):
     plt.tight_layout()
     plt.show()
 
-def df_pca(df, pca):
-	X_pca = pca.fit_transform(df[x1]).flatten()
-	Y_pca = pca.fit_transform(df[y1]).flatten()
-	return pd.DataFrame({'class': df["class"], 'X': X_pca, 'Y': Y_pca})
+def random_forest_classification(train_df, test_df, n_estimators = 7):
+    X_train = train_df.drop("class", axis=1).drop("origin", axis=1)
+    y_train = train_df["class"]
 
+    X_test = test_df.drop("class", axis=1).drop("origin", axis=1)
+    y_test = test_df["class"]
 
-def plot_scatter(df):
-	neg = df[df["class"] == 0]
-	pos = df[df["class"] == 1]
-	plt.scatter(pos["X"], pos["Y"], color = "r")
-	plt.scatter(neg["X"], neg["Y"], color = "b")
-	plt.show()
+    rf_model = RandomForestClassifier(
+        n_estimators=n_estimators, 
+        criterion="entropy", 
+        max_features="sqrt",
+        min_samples_split=2,
+        min_samples_leaf=1,
+        max_depth=20
+        )
+    rf_model.fit(X_train, y_train)
+
+    y_pred = rf_model.predict(X_test)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    confusion_mat = confusion_matrix(y_test, y_pred)
+
+    display_random_forest_results(accuracy, confusion_mat)
+
+def find_best_model(train_df, test_df):
+    X_train = train_df.drop("class", axis=1).drop("origin", axis=1)
+    y_train = train_df["class"]
+
+    X_test = test_df.drop("class", axis=1).drop("origin", axis=1)
+    y_test = test_df["class"]
+
+    param_grid = { 
+        'max_features': ['sqrt', 'log2'],
+        'criterion': ['gini', 'entropy'],
+        'class_weight': [None, 'balanced', 'balanced_subsample'],
+        'max_depth': [None, 10, 20],
+        'min_samples_split': [2, 5, 10],
+        'min_samples_leaf': [1, 2, 4]
+    }
+
+    rf_model = RandomForestClassifier(n_estimators=15, random_state=42)
+    CV_rfc = GridSearchCV(estimator=rf_model, param_grid=param_grid, cv=5)
+    CV_rfc.fit(X_train, y_train)
+
+    # Best hyperparameters
+    best_params = CV_rfc.best_params_
+    print("Best Hyperparameters:", best_params)
+
+    # Best model
+    best_rf_model = CV_rfc.best_estimator_
+
+    best_rf_model.fit(X_train, y_train)
+
+    y_pred = best_rf_model.predict(X_test)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    confusion_mat = confusion_matrix(y_test, y_pred)
+
+    display_random_forest_results(accuracy, confusion_mat)
+
+def find_best_n(train_df, test_df, start_n=1, end_n=20):
+    best_n = -1
+    best_accuracy = 0
+
+    for n in range(start_n, end_n + 1):
+        accuracy, _ = random_forest_classification(train_df, test_df, n)
+
+        print(f"Accuracy for n={n}: {accuracy}")
+
+        if accuracy > best_accuracy:
+            best_accuracy = accuracy
+            best_n = n
+
+    print(f"\nBest n: {best_n} with average accuracy: {best_accuracy}")
 

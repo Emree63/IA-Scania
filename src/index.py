@@ -1,5 +1,3 @@
-from sklearn.decomposition import PCA
-
 from func import *
 from constants import *
 
@@ -19,19 +17,13 @@ pos_data = train[train["class"] == 1]
 neg_means = neg_data.drop(columns=["class", "origin"]).mean()
 pos_means = pos_data.drop(columns=["class", "origin"]).mean()
 
-pca = PCA(n_components=0.95)
-
-train_pca, test_pca = df_pca(train, pca), df_pca(test, pca)
-
 def menu():
-    print("1. Display Histogramme")
+    print("1. Display Histogram")
     print("2. Display Correlation")
     print("3. Display Infos")
-    print("4. Display KNN results")
-    print("5. Find best K value")
-    print("6. Perform PCA and plot scatter")
-    print("7. Perform PCA and KNN classification")
-    print("9. Exit")
+    print("4. Display Random Forest results")
+    print("5. Find best model")
+    print("\n9. Exit")
 
     choice = input("Enter your choice: ")
 
@@ -39,36 +31,21 @@ def menu():
 
 def execute_function(choice, train, test, x_feature, y_feature):
 	if choice == 1:
-		displayHisto(neg_means, pos_means)
+		display_hist(neg_means, pos_means)
 	elif choice == 2:
-		displayCorr(train)
+		display_corr(train)
 	elif choice == 3:
 		print("Train :")
-		displayInfo(train)
+		display_info(train)
 		print("Test :")
-		displayInfo(test)
+		display_info(test)
 	elif choice == 4:
-		k = input("N: ")
-		display_knn_results(train_pca, test_pca, "X", "Y", int(k))
+		random_forest_classification(train, test, int(input("N: ")))
 	elif choice == 5:
-		find_best_k(train_pca, test_pca, "X", "Y")
-	elif choice == 6:
-		plot_scatter(train_pca)
-	elif choice == 7:
-		k = input("N: ")
-		knn_classification(train_pca, test_pca, x_feature, y_feature, int(k))
-		find_best_k(train_pca, test_pca, x_feature, y_feature)
+		find_best_model(train, test)
 
 choice = menu()
 
 while choice != 9:
     execute_function(choice, train, test, "ac_000", "cq_000")
     choice = menu()
-
-
-# x1 = ["ab_000", "bb_000", "bv_000", "bu_000"]
-# y1 = ["dq_000", "cq_000", "cc_000"]
-
-#plot_scatter(train_pca)
-#knn_classification(train_pca, test_pca, "X", "Y")
-#find_best_k(train_pca, test_pca, "X", "Y")
