@@ -1,7 +1,7 @@
 # Modelisation
 
 ---
-[Presentation](#presentation) | [Distribution](#gitlab-distribution)
+[Presentation](#presentation) | [Distribution](#gitlab-distribution) | [Random Forest](#random-forest)
 
 ---
 
@@ -24,9 +24,17 @@ The root of our Gitlab consists of two essential folders for the project:
 
 [**src**](src) : **Application code**
 
-[**doc**](data) : **Used data**
+[**data**](data) : **Used data**
 
-</br>
+[**doc**](doc) : **Project Documentation**
+
+
+
+## Random Forest
+
+The most accurate solution, with more than 99% accuracy and good decision, is the random forest, with the following confusion matrix:
+
+![RandomForest](doc/img/RandomForestScania.png)
 
 <div align = center>
 © PM1
