@@ -26,7 +26,7 @@ The root of our Gitlab consists of two essential folders for the project:
 
 [**data**](data) : **Used data**
 
-[**doc**](doc) : **Project Documentation**
+[**doc**](doc) : **Project Documentation** (Doxygen)
 
 
 
