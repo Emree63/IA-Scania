@@ -23,6 +23,7 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Modelisation - Scania
    </div>
+   <div id="projectbrief">Scania dataset : EDA for Histograms https://www.kaggle.com/code/percevalve/scania-dataset-eda-for-histograms/notebook</div>
   </td>
  </tr>
  </tbody>
@@ -107,9 +108,12 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Displays correlation of columns with the 'class' column and a bar plot. </p>
-<p>Parameters:</p><ul>
-<li>df (pd.DataFrame): The input DataFrame. </li>
-</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">df</td><td>(pd.DataFrame): The input DataFrame. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -130,9 +134,12 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Displays stats about the dataframe. </p>
-<p>Parameters:</p><ul>
-<li>df (pd.DataFrame): The input DataFrame. </li>
-</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">df</td><td>(pd.DataFrame): The input DataFrame. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -163,10 +170,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Display accuracy and confusion matrix in a formatted way and plot confusion matrices. </p>
-<p>Parameters:</p><ul>
-<li>accuracy (float): Classification accuracy.</li>
-<li>confusion_mat (np.ndarray): Confusion matrix. </li>
-</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">accuracy</td><td>(float): Classification accuracy. </td></tr>
+    <tr><td class="paramname">confusion_mat</td><td>(np.ndarray): Confusion matrix. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -197,10 +207,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Find the best RandomForestClassifier Model with a parameter grid. </p>
-<p>Parameters:</p><ul>
-<li>train_df (pd.DataFrame): Training DataFrame.</li>
-<li>test_df (pd.DataFrame): Testing DataFrame. </li>
-</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">train_df</td><td>(pd.DataFrame): Training DataFrame. </td></tr>
+    <tr><td class="paramname">test_df</td><td>(pd.DataFrame): Testing DataFrame. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -275,11 +288,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Apply RandomForestClassifier to test_df and return accuracy and confusion matrix. </p>
-<p>Parameters:</p><ul>
-<li>train_df (pd.DataFrame): Training DataFrame.</li>
-<li>test_df (pd.DataFrame): Testing DataFrame.</li>
-<li>n_estimators (int, optional): Number of trees in the forest (default is 7). </li>
-</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">train_df</td><td>(pd.DataFrame): Training DataFrame. </td></tr>
+    <tr><td class="paramname">test_df</td><td>(pd.DataFrame): Testing DataFrame. </td></tr>
+    <tr><td class="paramname">n_estimators</td><td>(int, optional): Number of trees in the forest (default is 7). </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -28,10 +28,12 @@ def \mbox{\hyperlink{namespacefunc_a4c3ea3f888960f56d531c21eab7f69c4}{find\+\_\+
 
 Displays correlation of columns with the \textquotesingle{}class\textquotesingle{} column and a bar plot. 
 
-Parameters\+:
-\begin{DoxyItemize}
-\item df (pd.\+Data\+Frame)\+: The input Data\+Frame. 
-\end{DoxyItemize}\mbox{\Hypertarget{namespacefunc_a1eb5a53ffac10795894fffafa2690e1c}\label{namespacefunc_a1eb5a53ffac10795894fffafa2690e1c}} 
+
+\begin{DoxyParams}{Parameters}
+{\em df} & (pd.\+Data\+Frame)\+: The input Data\+Frame. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespacefunc_a1eb5a53ffac10795894fffafa2690e1c}\label{namespacefunc_a1eb5a53ffac10795894fffafa2690e1c}} 
 \index{func@{func}!display\_info@{display\_info}}
 \index{display\_info@{display\_info}!func@{func}}
 \doxysubsubsection{\texorpdfstring{display\_info()}{display\_info()}}
@@ -41,10 +43,12 @@ Parameters\+:
 
 Displays stats about the dataframe. 
 
-Parameters\+:
-\begin{DoxyItemize}
-\item df (pd.\+Data\+Frame)\+: The input Data\+Frame. 
-\end{DoxyItemize}\mbox{\Hypertarget{namespacefunc_a355362bb8d8c73d9257ced7dbd617de9}\label{namespacefunc_a355362bb8d8c73d9257ced7dbd617de9}} 
+
+\begin{DoxyParams}{Parameters}
+{\em df} & (pd.\+Data\+Frame)\+: The input Data\+Frame. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespacefunc_a355362bb8d8c73d9257ced7dbd617de9}\label{namespacefunc_a355362bb8d8c73d9257ced7dbd617de9}} 
 \index{func@{func}!display\_random\_forest\_results@{display\_random\_forest\_results}}
 \index{display\_random\_forest\_results@{display\_random\_forest\_results}!func@{func}}
 \doxysubsubsection{\texorpdfstring{display\_random\_forest\_results()}{display\_random\_forest\_results()}}
@@ -54,11 +58,14 @@ Parameters\+:
 
 Display accuracy and confusion matrix in a formatted way and plot confusion matrices. 
 
-Parameters\+:
-\begin{DoxyItemize}
-\item accuracy (float)\+: Classification accuracy.
-\item confusion\+\_\+mat (np.\+ndarray)\+: Confusion matrix. 
-\end{DoxyItemize}\mbox{\Hypertarget{namespacefunc_a4c3ea3f888960f56d531c21eab7f69c4}\label{namespacefunc_a4c3ea3f888960f56d531c21eab7f69c4}} 
+
+\begin{DoxyParams}{Parameters}
+{\em accuracy} & (float)\+: Classification accuracy. \\
+\hline
+{\em confusion\+\_\+mat} & (np.\+ndarray)\+: Confusion matrix. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespacefunc_a4c3ea3f888960f56d531c21eab7f69c4}\label{namespacefunc_a4c3ea3f888960f56d531c21eab7f69c4}} 
 \index{func@{func}!find\_best\_model@{find\_best\_model}}
 \index{find\_best\_model@{find\_best\_model}!func@{func}}
 \doxysubsubsection{\texorpdfstring{find\_best\_model()}{find\_best\_model()}}
@@ -68,11 +75,14 @@ Parameters\+:
 
 Find the best Random\+Forest\+Classifier Model with a parameter grid. 
 
-Parameters\+:
-\begin{DoxyItemize}
-\item train\+\_\+df (pd.\+Data\+Frame)\+: Training Data\+Frame.
-\item test\+\_\+df (pd.\+Data\+Frame)\+: Testing Data\+Frame. 
-\end{DoxyItemize}\mbox{\Hypertarget{namespacefunc_ae86137eaafc05281c503c81b162b9184}\label{namespacefunc_ae86137eaafc05281c503c81b162b9184}} 
+
+\begin{DoxyParams}{Parameters}
+{\em train\+\_\+df} & (pd.\+Data\+Frame)\+: Training Data\+Frame. \\
+\hline
+{\em test\+\_\+df} & (pd.\+Data\+Frame)\+: Testing Data\+Frame. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespacefunc_ae86137eaafc05281c503c81b162b9184}\label{namespacefunc_ae86137eaafc05281c503c81b162b9184}} 
 \index{func@{func}!pre\_processing@{pre\_processing}}
 \index{pre\_processing@{pre\_processing}!func@{func}}
 \doxysubsubsection{\texorpdfstring{pre\_processing()}{pre\_processing()}}
@@ -102,9 +112,12 @@ pd.\+Data\+Frame\+: Processed Data\+Frame.
 
 Apply Random\+Forest\+Classifier to test\+\_\+df and return accuracy and confusion matrix. 
 
-Parameters\+:
-\begin{DoxyItemize}
-\item train\+\_\+df (pd.\+Data\+Frame)\+: Training Data\+Frame.
-\item test\+\_\+df (pd.\+Data\+Frame)\+: Testing Data\+Frame.
-\item n\+\_\+estimators (int, optional)\+: Number of trees in the forest (default is 7). 
-\end{DoxyItemize}
+
+\begin{DoxyParams}{Parameters}
+{\em train\+\_\+df} & (pd.\+Data\+Frame)\+: Training Data\+Frame. \\
+\hline
+{\em test\+\_\+df} & (pd.\+Data\+Frame)\+: Testing Data\+Frame. \\
+\hline
+{\em n\+\_\+estimators} & (int, optional)\+: Number of trees in the forest (default is 7). \\
+\hline
+\end{DoxyParams}
