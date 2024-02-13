@@ -46,6 +46,7 @@ The root of our Gitlab consists of two essential folders for the project:
 
 [**doc**](doc) : **Project Documentation** (Doxygen)
 
+Dataset: [**scania**](https://www.kaggle.com/code/percevalve/scania-dataset-eda-for-histograms/notebook)
 
 ## Random Forest
 
