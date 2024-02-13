@@ -6,53 +6,99 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.model_selection import GridSearchCV
 
+def pre_processing(df, value_for_na = 0):
+    """!
+    Processes the dataframe to make it easier to handle.
 
-def display_info(train):
-    print("Header :", train.head(5))
-    print("Shape :", train.shape)
-    print("Describe :", train.describe())
-    print("Info :", train.info())
+    @param df (pd.DataFrame): The input DataFrame.
+    @param value_for_na (int, optional): Value to replace 'na' with (default is 0).
 
-def display_corr(train):
-    correlations = train.corr()["class"].sort_values(ascending=False)
-    print(correlations.to_string())
+    @return pd.DataFrame: Processed DataFrame.
+    """    
 
-def pre_processing(df,value_for_na = 0):
+    # Replaces 'pos' and 'neg' values with 1 and 0
     df["class"] = df["class"].map({"neg":0,"pos":1})
-    df = df.replace("na",value_for_na)
-    for col in df.columns:
-        if col != "origin":
-            df[col] = pd.to_numeric(df[col])
+
+    # Replaces 'na' values with value_for_na (0 by default)
+    df = df.replace("na", value_for_na)
+
+    # Converts the dataframe values into numeric
+    df = df.apply(pd.to_numeric, errors='coerce')
+
     return df
 
-def display_hist(neg_means, pos_means):
+def display_info(df):
+    """!
+    Displays stats about the dataframe.
 
-    print("Moyennes pour la classe 'neg':")
-    print(neg_means)
+    @param df (pd.DataFrame): The input DataFrame.
+    """
 
-    print("\nMoyennes pour la classe 'pos':")
-    print(pos_means)
-    columns = neg_means.index
+    print("Header :", df.head(5))
+    print("Shape :", df.shape)
+    print("Describe :", df.describe())
+    print("Info :", df.info())
 
-    fig, ax = plt.subplots()
-    bar_width = 0.5
-    bar_positions_neg = np.arange(len(columns))
-    bar_positions_pos = bar_positions_neg + bar_width
+def display_corr(df):
+    """!
+    Displays correlation of columns with the 'class' column and a bar plot.
 
-    ax.bar(bar_positions_neg, neg_means, bar_width, label='neg')
-    ax.bar(bar_positions_pos, pos_means, bar_width, label='pos')
+    @param df (pd.DataFrame): The input DataFrame.
+    """
 
-    ax.set_xticks(bar_positions_neg + bar_width / 2)
-    ax.set_xticklabels(columns, rotation=60, ha='right')
-    ax.legend()
-    ax.set_xlabel('Colonnes')
-    ax.set_ylabel('Valeurs moyennes')
-    ax.set_title('Moyennes pour chaque colonne par classe')
+    correlations = df.corr()["class"].sort_values(ascending=False)
+    print(correlations.to_string())
 
-    plt.tight_layout()
+    correlations[1:12] .plot(kind='bar')
+    plt.xlabel('Features')
+    plt.ylabel('Correlation')
+    plt.title('Correlation with Target Class')
     plt.show()
 
+def random_forest_classification(train_df, test_df, n_estimators = 7):
+    """!
+    Apply RandomForestClassifier to test_df and return accuracy and confusion matrix.
+
+    @param train_df (pd.DataFrame): Training DataFrame.
+    @param test_df (pd.DataFrame): Testing DataFrame.
+    @param n_estimators (int, optional): Number of trees in the forest (default is 7).
+    """
+
+    # Isolate the data and the labels
+    X_train, y_train = train_df.drop("class", axis=1), train_df["class"]
+    X_test, y_test = test_df.drop("class", axis=1), test_df["class"]
+
+    # Creates the model, here we use a RandomForestClassifier with parameters chosen using the find_best_model function
+    rf_model = RandomForestClassifier(
+        n_estimators=n_estimators, 
+        criterion="entropy", 
+        max_features="sqrt",
+        min_samples_split=2,
+        min_samples_leaf=1,
+        max_depth=20
+    )
+
+
+    # Fit the model on the training data
+    rf_model.fit(X_train, y_train)
+
+    # Predict the labels for the test data
+    y_pred = rf_model.predict(X_test)
+
+    # Get and display results
+    accuracy = accuracy_score(y_test, y_pred)
+    confusion_mat = confusion_matrix(y_test, y_pred)
+    display_random_forest_results(accuracy, confusion_mat)
+
+
 def display_random_forest_results(accuracy, confusion_mat):
+    """!
+    Display accuracy and confusion matrix in a formatted way and plot confusion matrices.
+
+    @param accuracy (float): Classification accuracy.
+    @param confusion_mat (np.ndarray): Confusion matrix.
+    """
+
     print(f"Accuracy: {accuracy}")
     print("\nConfusion Matrix:")
     print(confusion_mat)
@@ -64,7 +110,7 @@ def display_random_forest_results(accuracy, confusion_mat):
     disp.plot(cmap='winter', values_format='d', ax=axs[0])
     axs[0].set_title('Confusion Matrix')
 
-    # Normalized
+    # Normalize the matrix
     normalized_confusion_mat = confusion_mat / confusion_mat.sum(axis=1)[:, np.newaxis]
     disp_normalized = ConfusionMatrixDisplay(confusion_matrix=normalized_confusion_mat, display_labels=['No failure', 'Failure'])
     disp_normalized.plot(cmap='summer', values_format='.4f', ax=axs[1])
@@ -73,78 +119,53 @@ def display_random_forest_results(accuracy, confusion_mat):
     plt.tight_layout()
     plt.show()
 
-def random_forest_classification(train_df, test_df, n_estimators = 7):
-    X_train = train_df.drop("class", axis=1).drop("origin", axis=1)
-    y_train = train_df["class"]
-
-    X_test = test_df.drop("class", axis=1).drop("origin", axis=1)
-    y_test = test_df["class"]
-
-    rf_model = RandomForestClassifier(
-        n_estimators=n_estimators, 
-        criterion="entropy", 
-        max_features="sqrt",
-        min_samples_split=2,
-        min_samples_leaf=1,
-        max_depth=20
-        )
-    rf_model.fit(X_train, y_train)
-
-    y_pred = rf_model.predict(X_test)
-
-    accuracy = accuracy_score(y_test, y_pred)
-    confusion_mat = confusion_matrix(y_test, y_pred)
-
-    display_random_forest_results(accuracy, confusion_mat)
 
 def find_best_model(train_df, test_df):
-    X_train = train_df.drop("class", axis=1).drop("origin", axis=1)
-    y_train = train_df["class"]
+    """!
+    Find the best RandomForestClassifier Model with a parameter grid.
 
-    X_test = test_df.drop("class", axis=1).drop("origin", axis=1)
-    y_test = test_df["class"]
+    @param train_df (pd.DataFrame): Training DataFrame.
+    @param test_df (pd.DataFrame): Testing DataFrame.
+    """
 
+    # Isolate the data and the labels
+    X_train, y_train = train_df.drop("class", axis=1), train_df["class"]
+    X_test, y_test = test_df.drop("class", axis=1), test_df["class"]
+
+    # Define the parameter grid
     param_grid = { 
         'max_features': ['sqrt', 'log2'],
         'criterion': ['gini', 'entropy'],
         'class_weight': [None, 'balanced', 'balanced_subsample'],
-        'max_depth': [None, 10, 20],
-        'min_samples_split': [2, 5, 10],
-        'min_samples_leaf': [1, 2, 4]
+        # 'max_depth': [None, 10, 20],
+        # 'min_samples_split': [2, 5, 10],
+        # 'min_samples_leaf': [1, 2, 4]
     }
 
+
+    # Creates a RandomForestClassifier model
     rf_model = RandomForestClassifier(n_estimators=15, random_state=42)
-    CV_rfc = GridSearchCV(estimator=rf_model, param_grid=param_grid, cv=5)
+
+    # Inits a GridSearchCV with the model and the parameter grid to find the best working parameters
+    CV_rfc = GridSearchCV(estimator=rf_model, param_grid=param_grid)
+
+    # Fit the model on the training data
     CV_rfc.fit(X_train, y_train)
 
-    # Best hyperparameters
+    # Get best hyperparameters and prints them
     best_params = CV_rfc.best_params_
     print("Best Hyperparameters:", best_params)
 
-    # Best model
+    # Get the best working model
     best_rf_model = CV_rfc.best_estimator_
 
+    # Fit the best model on the training data
     best_rf_model.fit(X_train, y_train)
 
+    # Predict the labels for the test data with the best model
     y_pred = best_rf_model.predict(X_test)
 
+    # Get and display results
     accuracy = accuracy_score(y_test, y_pred)
     confusion_mat = confusion_matrix(y_test, y_pred)
-
     display_random_forest_results(accuracy, confusion_mat)
-
-def find_best_n(train_df, test_df, start_n=1, end_n=20):
-    best_n = -1
-    best_accuracy = 0
-
-    for n in range(start_n, end_n + 1):
-        accuracy, _ = random_forest_classification(train_df, test_df, n)
-
-        print(f"Accuracy for n={n}: {accuracy}")
-
-        if accuracy > best_accuracy:
-            best_accuracy = accuracy
-            best_n = n
-
-    print(f"\nBest n: {best_n} with average accuracy: {best_accuracy}")
-
